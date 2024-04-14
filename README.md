@@ -1,18 +1,23 @@
-# Nome do projeto
-Escreva um ou dois  parágrafo resumindo o objetivo do seu projeto.
+# LocaFacil - Locadora de veículos
+Nesse projeto implementaremos o backend de uma hipotetica locadora de veículos para praticar os ensinamentos da disciplina
 
 ## Alunos integrantes da equipe
 
-* Nome completo do aluno 1
-* Nome completo do aluno 2
-* Nome completo do aluno 3
-* Nome completo do aluno 4
+* Luana Schelb Teixeira
 
 ## Professores responsáveis
 
-* Nome completo do professor 1
-* Nome completo do professor 2
+* Leonardo Vilela Cardoso
 
 ## Instruções de utilização
 
-Assim que a primeira versão do sistema estiver disponível, deverá complementar com as instruções de utilização. Descreva como instalar eventuais dependências e como executar a aplicação.
+Para a utilização do projeto realize os seguintes passos em um terminal:
+
+`git clone https://github.com/PSG-TADS/psg-tads-2024-1-back-bd-luaschelb.git`
+
+Abre o diretório do repositório como uma solução na ferramenta Visual Studio
+
+`psg-tads-2024-1-back-bd-luaschelb\codigo\LocadoraVeiculos`
+
+Na aba superior clique em "Depurar" e então em "Iniciar sem depurar" e o projeto rodará.
+
