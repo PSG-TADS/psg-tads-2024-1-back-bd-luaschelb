@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using LocadoraVeiculos.Models;
 
 namespace LocadoraVeiculos.Models
 {
@@ -41,5 +42,7 @@ namespace LocadoraVeiculos.Models
                 .WithOne(r => r.FuncionarioEntrada)
                 .HasForeignKey(r => r.FuncionarioEntradaId);
         }
+        public DbSet<LocadoraVeiculos.Models.Locadoras> Locadoras { get; set; } = default!;
+        public DbSet<LocadoraVeiculos.Models.Feedbacks> Feedbacks { get; set; } = default!;
     }
 }

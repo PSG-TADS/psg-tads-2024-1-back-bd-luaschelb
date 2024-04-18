@@ -12,9 +12,9 @@ namespace LocadoraVeiculos.Models
         public DateTime DataFim { get; set; }
         public int VeiculoId { get; set; }
         [ForeignKey("VeiculoId")]
-        public Veiculos Veiculo { get; set; }
+        public Veiculos? Veiculo { get; set; }
         public int MecanicoId { get; set; }
         [ForeignKey("MecanicoId")]
-        public Mecanicos Mecanico { get; set; }
+        public Mecanicos? Mecanico { get; set; }
     }
 }

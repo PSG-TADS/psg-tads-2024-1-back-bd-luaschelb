@@ -6,10 +6,12 @@ namespace LocadoraVeiculos.Models
     {
         [Key]
         public int Id { get; set; }
-        public string? Marca { get; set; }
-        public string? Modelo { get; set; }
+        public string Marca { get; set; }
+        public string Modelo { get; set; }
+        public string Ano { get; set; }
+        public string Placa { get; set; }
         public decimal PrecoDia { get; set; }
-        public ICollection<Reservas> Reservas { get; set; }
-        public ICollection<Manutencoes> manutencoes { get; set; }
+        public ICollection<Reservas>? Reservas { get; set; }
+        public ICollection<Manutencoes>? manutencoes { get; set; }
     }
 }

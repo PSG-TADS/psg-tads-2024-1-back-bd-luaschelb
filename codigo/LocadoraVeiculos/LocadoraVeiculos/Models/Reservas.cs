@@ -13,10 +13,10 @@ namespace LocadoraVeiculos.Models
         public string? Status { get; set; }
         public int VeiculoId { get; set; }
         [ForeignKey("VeiculoId")]
-        public Veiculos Veiculo { get; set; }
+        public Veiculos? Veiculo { get; set; }
         public int ClienteId { get; set; }
         [ForeignKey("ClienteId")]
-        public Clientes Cliente { get; set; }
+        public Clientes? Cliente { get; set; }
         public int FuncionarioRetiradaId { get; set; } 
         [ForeignKey("FuncionarioRetiradaId")]
         public Funcionarios? FuncionarioRetirada { get; set; }

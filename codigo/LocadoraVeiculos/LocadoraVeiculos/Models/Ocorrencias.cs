@@ -10,7 +10,7 @@ namespace LocadoraVeiculos.Models
 
         public int ReservaId { get; set; }
         [ForeignKey("ReservaId")]
-        public Reservas Reserva { get; set; }
+        public Reservas? Reserva { get; set; }
         public DateTime DataAcidente { get; set; }
         public string? Local { get; set; }
         public string? Descricao { get; set; }

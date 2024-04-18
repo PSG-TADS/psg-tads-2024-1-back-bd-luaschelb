@@ -1,11 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using LocadoraVeiculos.Models;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<LocadoraContext>();
+namespace LocadoraVeiculos
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<LocadoraContext>();
 
-var app = builder.Build();
+            builder.Services.AddControllers();
 
-app.MapGet("/", () => "Hello World!");
+            var app = builder.Build();
 
-app.Run();
+
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+
+
+            app.MapGet("/", () => "Hello World!");
+            app.Run();
+        }
+    }
+}
