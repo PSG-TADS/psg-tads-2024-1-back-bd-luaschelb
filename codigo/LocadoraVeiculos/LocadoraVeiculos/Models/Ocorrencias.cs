@@ -7,7 +7,6 @@ namespace LocadoraVeiculos.Models
     {
         [Key]
         public int Id { get; set; }
-
         public int ReservaId { get; set; }
         [ForeignKey("ReservaId")]
         public Reservas? Reserva { get; set; }
