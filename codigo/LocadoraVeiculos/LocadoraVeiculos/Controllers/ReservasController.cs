@@ -24,21 +24,34 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservas>>> GetReservas()
         {
-            return await _context.Reservas.ToListAsync();
+            try
+            {
+                return await _context.Reservas.ToListAsync();
+            }
+            catch (Exception ex) {
+                return StatusCode(500, "Ocorreu um erro ao listar as reserva");
+            }
         }
 
         // GET: api/Reservas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservas>> GetReservas(int id)
         {
-            var reservas = await _context.Reservas.FindAsync(id);
-
-            if (reservas == null)
+            try
             {
-                return NotFound();
-            }
+                var reservas = await _context.Reservas.FindAsync(id);
 
-            return reservas;
+                if (reservas == null)
+                {
+                    return NotFound();
+                }
+
+                return reservas;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar a reserva");
+            }
         }
 
         // PUT: api/Reservas/5
@@ -46,30 +59,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservas(int id, Reservas reservas)
         {
-            if (id != reservas.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(reservas).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReservasExists(id))
+                if (id != reservas.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(reservas).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ReservasExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar reserva");
+            }
         }
 
         // POST: api/Reservas
@@ -77,26 +97,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservas>> PostReservas(Reservas reservas)
         {
-            _context.Reservas.Add(reservas);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Reservas.Add(reservas);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReservas", new { id = reservas.Id }, reservas);
+                return CreatedAtAction("GetReservas", new { id = reservas.Id }, reservas);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar reserva");
+            }
         }
 
         // DELETE: api/Reservas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservas(int id)
         {
-            var reservas = await _context.Reservas.FindAsync(id);
-            if (reservas == null)
+            try
             {
-                return NotFound();
+                var reservas = await _context.Reservas.FindAsync(id);
+                if (reservas == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Reservas.Remove(reservas);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Reservas.Remove(reservas);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar reserva");
+            }
         }
 
         private bool ReservasExists(int id)

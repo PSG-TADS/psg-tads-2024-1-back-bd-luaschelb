@@ -24,21 +24,35 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Feedbacks>>> GetFeedbacks()
         {
-            return await _context.Feedbacks.ToListAsync();
+            try
+            {
+                return await _context.Feedbacks.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar feedbacks");
+            }
         }
 
         // GET: api/Feedbacks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Feedbacks>> GetFeedbacks(int id)
         {
-            var feedbacks = await _context.Feedbacks.FindAsync(id);
-
-            if (feedbacks == null)
+            try
             {
-                return NotFound();
-            }
+                var feedbacks = await _context.Feedbacks.FindAsync(id);
 
-            return feedbacks;
+                if (feedbacks == null)
+                {
+                    return NotFound();
+                }
+
+                return feedbacks;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar feedback");
+            }
         }
 
         // PUT: api/Feedbacks/5
@@ -46,30 +60,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFeedbacks(int id, Feedbacks feedbacks)
         {
-            if (id != feedbacks.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(feedbacks).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FeedbacksExists(id))
+                if (id != feedbacks.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(feedbacks).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FeedbacksExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar feedback");
+            }
         }
 
         // POST: api/Feedbacks
@@ -77,26 +98,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Feedbacks>> PostFeedbacks(Feedbacks feedbacks)
         {
-            _context.Feedbacks.Add(feedbacks);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Feedbacks.Add(feedbacks);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFeedbacks", new { id = feedbacks.Id }, feedbacks);
+                return CreatedAtAction("GetFeedbacks", new { id = feedbacks.Id }, feedbacks);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar feedback");
+            }
         }
 
         // DELETE: api/Feedbacks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFeedbacks(int id)
         {
-            var feedbacks = await _context.Feedbacks.FindAsync(id);
-            if (feedbacks == null)
+            try
             {
-                return NotFound();
+                var feedbacks = await _context.Feedbacks.FindAsync(id);
+                if (feedbacks == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Feedbacks.Remove(feedbacks);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Feedbacks.Remove(feedbacks);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar feedback");
+            }
         }
 
         private bool FeedbacksExists(int id)

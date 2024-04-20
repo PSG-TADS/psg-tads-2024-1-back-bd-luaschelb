@@ -24,21 +24,35 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ocorrencias>>> GetOcorrencias()
         {
-            return await _context.Ocorrencias.ToListAsync();
+            try
+            {
+                return await _context.Ocorrencias.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar ocorrencias");
+            }
         }
 
         // GET: api/Ocorrencias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Ocorrencias>> GetOcorrencias(int id)
         {
-            var ocorrencias = await _context.Ocorrencias.FindAsync(id);
-
-            if (ocorrencias == null)
+            try
             {
-                return NotFound();
-            }
+                var ocorrencias = await _context.Ocorrencias.FindAsync(id);
 
-            return ocorrencias;
+                if (ocorrencias == null)
+                {
+                    return NotFound();
+                }
+
+                return ocorrencias;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar ocorrencia");
+            }
         }
 
         // PUT: api/Ocorrencias/5
@@ -46,30 +60,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOcorrencias(int id, Ocorrencias ocorrencias)
         {
-            if (id != ocorrencias.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(ocorrencias).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OcorrenciasExists(id))
+                if (id != ocorrencias.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(ocorrencias).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OcorrenciasExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar ocorrencia");
+            }
         }
 
         // POST: api/Ocorrencias
@@ -77,26 +98,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Ocorrencias>> PostOcorrencias(Ocorrencias ocorrencias)
         {
-            _context.Ocorrencias.Add(ocorrencias);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Ocorrencias.Add(ocorrencias);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOcorrencias", new { id = ocorrencias.Id }, ocorrencias);
+                return CreatedAtAction("GetOcorrencias", new { id = ocorrencias.Id }, ocorrencias);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar ocorrencia");
+            }
         }
 
         // DELETE: api/Ocorrencias/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOcorrencias(int id)
         {
-            var ocorrencias = await _context.Ocorrencias.FindAsync(id);
-            if (ocorrencias == null)
+            try
             {
-                return NotFound();
+                var ocorrencias = await _context.Ocorrencias.FindAsync(id);
+                if (ocorrencias == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Ocorrencias.Remove(ocorrencias);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Ocorrencias.Remove(ocorrencias);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar ocorrencia");
+            }
         }
 
         private bool OcorrenciasExists(int id)

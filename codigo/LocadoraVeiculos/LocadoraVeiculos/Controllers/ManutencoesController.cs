@@ -24,21 +24,35 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Manutencoes>>> GetManutencoes()
         {
-            return await _context.Manutencoes.ToListAsync();
+            try
+            {
+                return await _context.Manutencoes.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar manutencoes");
+            }
         }
 
         // GET: api/Manutencoes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Manutencoes>> GetManutencoes(int id)
         {
-            var manutencoes = await _context.Manutencoes.FindAsync(id);
-
-            if (manutencoes == null)
+            try
             {
-                return NotFound();
-            }
+                var manutencoes = await _context.Manutencoes.FindAsync(id);
 
-            return manutencoes;
+                if (manutencoes == null)
+                {
+                    return NotFound();
+                }
+
+                return manutencoes;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar manutencao");
+            }
         }
 
         // PUT: api/Manutencoes/5
@@ -46,30 +60,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutManutencoes(int id, Manutencoes manutencoes)
         {
-            if (id != manutencoes.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(manutencoes).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ManutencoesExists(id))
+                if (id != manutencoes.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(manutencoes).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ManutencoesExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar manutencao");
+            }
         }
 
         // POST: api/Manutencoes
@@ -77,26 +98,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Manutencoes>> PostManutencoes(Manutencoes manutencoes)
         {
-            _context.Manutencoes.Add(manutencoes);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Manutencoes.Add(manutencoes);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetManutencoes", new { id = manutencoes.Id }, manutencoes);
+                return CreatedAtAction("GetManutencoes", new { id = manutencoes.Id }, manutencoes);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar manutencao");
+            }
         }
 
         // DELETE: api/Manutencoes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteManutencoes(int id)
         {
-            var manutencoes = await _context.Manutencoes.FindAsync(id);
-            if (manutencoes == null)
+            try
             {
-                return NotFound();
+                var manutencoes = await _context.Manutencoes.FindAsync(id);
+                if (manutencoes == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Manutencoes.Remove(manutencoes);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Manutencoes.Remove(manutencoes);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar manutencao");
+            }
         }
 
         private bool ManutencoesExists(int id)

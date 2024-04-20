@@ -24,21 +24,35 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Veiculos>>> GetVeiculos()
         {
-            return await _context.Veiculos.ToListAsync();
+            try
+            {
+                return await _context.Veiculos.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar veiculos");
+            }
         }
 
         // GET: api/Veiculos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Veiculos>> GetVeiculos(int id)
         {
-            var veiculos = await _context.Veiculos.FindAsync(id);
-
-            if (veiculos == null)
+            try
             {
-                return NotFound();
-            }
+                var veiculos = await _context.Veiculos.FindAsync(id);
 
-            return veiculos;
+                if (veiculos == null)
+                {
+                    return NotFound();
+                }
+
+                return veiculos;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar veiculo");
+            }
         }
 
         // PUT: api/Veiculos/5
@@ -46,30 +60,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVeiculos(int id, Veiculos veiculos)
         {
-            if (id != veiculos.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(veiculos).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VeiculosExists(id))
+                if (id != veiculos.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(veiculos).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!VeiculosExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar veiculo");
+            }
         }
 
         // POST: api/Veiculos
@@ -77,26 +98,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Veiculos>> PostVeiculos(Veiculos veiculos)
         {
-            _context.Veiculos.Add(veiculos);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Veiculos.Add(veiculos);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVeiculos", new { id = veiculos.Id }, veiculos);
+                return CreatedAtAction("GetVeiculos", new { id = veiculos.Id }, veiculos);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar veiculo");
+            }
         }
 
         // DELETE: api/Veiculos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVeiculos(int id)
         {
-            var veiculos = await _context.Veiculos.FindAsync(id);
-            if (veiculos == null)
+            try
             {
-                return NotFound();
+                var veiculos = await _context.Veiculos.FindAsync(id);
+                if (veiculos == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Veiculos.Remove(veiculos);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Veiculos.Remove(veiculos);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar veiculo");
+            }
         }
 
         private bool VeiculosExists(int id)

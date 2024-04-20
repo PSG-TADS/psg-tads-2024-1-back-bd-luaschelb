@@ -24,21 +24,35 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Mecanicos>>> GetMecanicos()
         {
-            return await _context.Mecanicos.ToListAsync();
+            try
+            {
+                return await _context.Mecanicos.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar mecanicos");
+            }
         }
 
         // GET: api/Mecanicos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Mecanicos>> GetMecanicos(int id)
         {
-            var mecanicos = await _context.Mecanicos.FindAsync(id);
-
-            if (mecanicos == null)
+            try
             {
-                return NotFound();
-            }
+                var mecanicos = await _context.Mecanicos.FindAsync(id);
 
-            return mecanicos;
+                if (mecanicos == null)
+                {
+                    return NotFound();
+                }
+
+                return mecanicos;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar mecanico");
+            }
         }
 
         // PUT: api/Mecanicos/5
@@ -46,30 +60,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMecanicos(int id, Mecanicos mecanicos)
         {
-            if (id != mecanicos.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(mecanicos).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MecanicosExists(id))
+                if (id != mecanicos.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(mecanicos).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MecanicosExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar mecanico");
+            }
         }
 
         // POST: api/Mecanicos
@@ -77,26 +98,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Mecanicos>> PostMecanicos(Mecanicos mecanicos)
         {
-            _context.Mecanicos.Add(mecanicos);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Mecanicos.Add(mecanicos);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMecanicos", new { id = mecanicos.Id }, mecanicos);
+                return CreatedAtAction("GetMecanicos", new { id = mecanicos.Id }, mecanicos);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar mecanico");
+            }
         }
 
         // DELETE: api/Mecanicos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMecanicos(int id)
         {
-            var mecanicos = await _context.Mecanicos.FindAsync(id);
-            if (mecanicos == null)
+            try
             {
-                return NotFound();
+                var mecanicos = await _context.Mecanicos.FindAsync(id);
+                if (mecanicos == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Mecanicos.Remove(mecanicos);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Mecanicos.Remove(mecanicos);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar mecanico");
+            }
         }
 
         private bool MecanicosExists(int id)

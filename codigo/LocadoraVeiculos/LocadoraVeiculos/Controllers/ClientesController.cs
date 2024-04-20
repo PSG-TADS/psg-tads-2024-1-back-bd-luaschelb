@@ -24,21 +24,35 @@ namespace LocadoraVeiculos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
-            return await _context.Clientes.ToListAsync();
+            try
+            {
+                return await _context.Clientes.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar clientes");
+            }
         }
 
         // GET: api/Clientes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Clientes>> GetClientes(int id)
         {
-            var clientes = await _context.Clientes.FindAsync(id);
-
-            if (clientes == null)
+            try
             {
-                return NotFound();
-            }
+                var clientes = await _context.Clientes.FindAsync(id);
 
-            return clientes;
+                if (clientes == null)
+                {
+                    return NotFound();
+                }
+
+                return clientes;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao listar cliente");
+            }
         }
 
         // PUT: api/Clientes/5
@@ -46,30 +60,37 @@ namespace LocadoraVeiculos.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClientes(int id, Clientes clientes)
         {
-            if (id != clientes.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(clientes).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientesExists(id))
+                if (id != clientes.Id)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(clientes).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ClientesExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocorreu um erro ao editar cliente");
+            }
         }
 
         // POST: api/Clientes
@@ -77,26 +98,40 @@ namespace LocadoraVeiculos.Controllers
         [HttpPost]
         public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
         {
-            _context.Clientes.Add(clientes);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Clientes.Add(clientes);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetClientes", new { id = clientes.Id }, clientes);
+                return CreatedAtAction("GetClientes", new { id = clientes.Id }, clientes);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao criar cliente");
+            }
         }
 
         // DELETE: api/Clientes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClientes(int id)
         {
-            var clientes = await _context.Clientes.FindAsync(id);
-            if (clientes == null)
+            try
             {
-                return NotFound();
+                var clientes = await _context.Clientes.FindAsync(id);
+                if (clientes == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Clientes.Remove(clientes);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Clientes.Remove(clientes);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao deletar cliente");
+            }
         }
 
         private bool ClientesExists(int id)
