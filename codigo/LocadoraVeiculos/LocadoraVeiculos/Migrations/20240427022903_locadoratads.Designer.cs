@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LocadoraVeiculos.Migrations
 {
     [DbContext(typeof(LocadoraContext))]
-    [Migration("20240418001439_locadoratads")]
+    [Migration("20240427022903_locadoratads")]
     partial class locadoratads
     {
         /// <inheritdoc />
@@ -269,10 +269,10 @@ namespace LocadoraVeiculos.Migrations
                     b.Property<DateTime>("Datalnicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FuncionarioEntradaId")
+                    b.Property<int?>("FuncionarioEntradaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FuncionarioRetiradaId")
+                    b.Property<int?>("FuncionarioRetiradaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -391,15 +391,12 @@ namespace LocadoraVeiculos.Migrations
 
                     b.HasOne("LocadoraVeiculos.Models.Funcionarios", "FuncionarioEntrada")
                         .WithMany("ReservasEntrada")
-                        .HasForeignKey("FuncionarioEntradaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FuncionarioEntradaId");
 
                     b.HasOne("LocadoraVeiculos.Models.Funcionarios", "FuncionarioRetirada")
                         .WithMany("ReservasRetirada")
                         .HasForeignKey("FuncionarioRetiradaId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("LocadoraVeiculos.Models.Veiculos", "Veiculo")
                         .WithMany("Reservas")

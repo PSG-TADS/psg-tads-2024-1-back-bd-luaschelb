@@ -17,10 +17,10 @@ namespace LocadoraVeiculos.Models
         public int ClienteId { get; set; }
         [ForeignKey("ClienteId")]
         public Clientes? Cliente { get; set; }
-        public int FuncionarioRetiradaId { get; set; } 
+        public int? FuncionarioRetiradaId { get; set; } 
         [ForeignKey("FuncionarioRetiradaId")]
         public Funcionarios? FuncionarioRetirada { get; set; }
-        public int FuncionarioEntradaId { get; set; }
+        public int? FuncionarioEntradaId { get; set; }
         [ForeignKey("FuncionarioEntradaId")]
         public Funcionarios? FuncionarioEntrada { get; set; }
         public ICollection<Ocorrencias>? Ocorrencias { get; set; }

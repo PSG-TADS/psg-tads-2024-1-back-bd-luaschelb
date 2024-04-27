@@ -141,8 +141,8 @@ namespace LocadoraVeiculos.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VeiculoId = table.Column<int>(type: "int", nullable: false),
                     ClienteId = table.Column<int>(type: "int", nullable: false),
-                    FuncionarioRetiradaId = table.Column<int>(type: "int", nullable: false),
-                    FuncionarioEntradaId = table.Column<int>(type: "int", nullable: false)
+                    FuncionarioRetiradaId = table.Column<int>(type: "int", nullable: true),
+                    FuncionarioEntradaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -157,8 +157,7 @@ namespace LocadoraVeiculos.Migrations
                         name: "FK_Reservas_Funcionarios_FuncionarioEntradaId",
                         column: x => x.FuncionarioEntradaId,
                         principalTable: "Funcionarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Reservas_Funcionarios_FuncionarioRetiradaId",
                         column: x => x.FuncionarioRetiradaId,
